@@ -57,7 +57,7 @@ function App() {
     setToken(data.token);
   };
 
-  // ✅ FETCH DATA
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (token) {
       fetchDashboard();
@@ -193,9 +193,8 @@ function App() {
           </button>
         </div>
       ) : (
-        // 🟢 DASHBOARD UI
+        // 🟢 DASHBOARD
         <div className="w-full max-w-4xl p-6">
-
           {/* Logout */}
           <button
             className="bg-red-500 text-white px-4 py-2 rounded float-right mb-4"
@@ -301,7 +300,6 @@ function App() {
               </div>
             ))}
           </div>
-
         </div>
       )}
     </div>
