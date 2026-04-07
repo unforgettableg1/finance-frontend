@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Bar } from "react-chartjs-2";
 
 import {
   Chart as ChartJS,
@@ -23,9 +24,9 @@ function App() {
   const [category, setCategory] = useState("");
   const [notes, setNotes] = useState("");
 
-  // ✅ NEW STATE FOR EDIT
   const [editId, setEditId] = useState(null);
 
+  // ✅ Chart Data
   const chartData = dashboard
     ? {
         labels: ["Income", "Expense"],
@@ -33,24 +34,30 @@ function App() {
           {
             label: "Amount",
             data: [dashboard.totalIncome, dashboard.totalExpense],
+            backgroundColor: ["#22c55e", "#ef4444"],
           },
         ],
       }
     : null;
 
+  // ✅ LOGIN
   const handleLogin = async () => {
-    const res = await fetch("http://finance-backend-quav.onrender.com/api/auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, password }),
-    });
+    const res = await fetch(
+      "https://finance-backend-quav.onrender.com/api/auth/login",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      }
+    );
 
     const data = await res.json();
     setToken(data.token);
   };
 
+  // ✅ FETCH DATA
   useEffect(() => {
     if (token) {
       fetchDashboard();
@@ -59,40 +66,49 @@ function App() {
   }, [token]);
 
   const fetchDashboard = async () => {
-    const res = await fetch("http://finance-backend-quav.onrender.com/api/dashboard/summary", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const res = await fetch(
+      "https://finance-backend-quav.onrender.com/api/dashboard/summary",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
     const data = await res.json();
     setDashboard(data);
   };
 
   const fetchRecords = async () => {
-    const res = await fetch("http://finance-backend-quav.onrender.com/api/records", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const res = await fetch(
+      "https://finance-backend-quav.onrender.com/api/records",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
     const data = await res.json();
     setRecords(data);
   };
 
   // ✅ ADD RECORD
   const handleAddRecord = async () => {
-    await fetch("http://finance-backend-quav.onrender.com/api/records", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        amount,
-        type,
-        category,
-        notes,
-      }),
-    });
+    await fetch(
+      "https://finance-backend-quav.onrender.com/api/records",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          amount,
+          type,
+          category,
+          notes,
+        }),
+      }
+    );
 
     fetchRecords();
     fetchDashboard();
@@ -100,16 +116,20 @@ function App() {
     setAmount("");
     setCategory("");
     setNotes("");
+    setType("income");
   };
 
   // ✅ DELETE RECORD
   const handleDelete = async (id) => {
-    await fetch(`http://finance-backend-quav.onrender.com/api/records/${id}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    await fetch(
+      `https://finance-backend-quav.onrender.com/api/records/${id}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
     fetchRecords();
     fetchDashboard();
@@ -117,19 +137,22 @@ function App() {
 
   // ✅ UPDATE RECORD
   const handleUpdate = async () => {
-    await fetch(`http://finance-backend-quav.onrender.com/api/records/${editId}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        amount,
-        type,
-        category,
-        notes,
-      }),
-    });
+    await fetch(
+      `https://finance-backend-quav.onrender.com/api/records/${editId}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          amount,
+          type,
+          category,
+          notes,
+        }),
+      }
+    );
 
     setEditId(null);
 
@@ -139,11 +162,13 @@ function App() {
     setAmount("");
     setCategory("");
     setNotes("");
+    setType("income");
   };
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
       {!token ? (
+        // 🔐 LOGIN UI
         <div className="bg-white p-8 rounded-xl shadow-md w-80">
           <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
 
@@ -168,8 +193,10 @@ function App() {
           </button>
         </div>
       ) : (
+        // 🟢 DASHBOARD UI
         <div className="w-full max-w-4xl p-6">
 
+          {/* Logout */}
           <button
             className="bg-red-500 text-white px-4 py-2 rounded float-right mb-4"
             onClick={() => setToken("")}
@@ -181,7 +208,7 @@ function App() {
             Finance Dashboard
           </h1>
 
-          {/* Dashboard */}
+          {/* Dashboard Summary */}
           {dashboard && (
             <div className="grid grid-cols-3 gap-4 mb-6">
               <div className="bg-green-500 text-white p-4 rounded">
@@ -196,11 +223,15 @@ function App() {
             </div>
           )}
 
-          {/* Chart */}
-         
-      
-          {/* Add / Update Form */}
-          <div className="bg-white p-4 rounded mt-4">
+          {/* 📊 Chart */}
+          {chartData && (
+            <div className="bg-white p-4 rounded mb-6">
+              <Bar data={chartData} />
+            </div>
+          )}
+
+          {/* ➕ Add / Update */}
+          <div className="bg-white p-4 rounded">
             <input
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
@@ -239,7 +270,7 @@ function App() {
             </button>
           </div>
 
-          {/* Records */}
+          {/* 📋 Records */}
           <div className="bg-white p-4 rounded mt-4">
             {records.map((r) => (
               <div key={r._id} className="flex justify-between border-b py-2">
