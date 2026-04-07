@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Bar } from "react-chartjs-2";
+
 import {
   Chart as ChartJS,
   BarElement,
@@ -39,7 +39,7 @@ function App() {
     : null;
 
   const handleLogin = async () => {
-    const res = await fetch("http://localhost:5000/api/auth/login", {
+    const res = await fetch("http://finance-backend-quav.onrender.com/api/auth/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -59,7 +59,7 @@ function App() {
   }, [token]);
 
   const fetchDashboard = async () => {
-    const res = await fetch("http://localhost:5000/api/dashboard/summary", {
+    const res = await fetch("http://finance-backend-quav.onrender.com/api/dashboard/summary", {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -69,7 +69,7 @@ function App() {
   };
 
   const fetchRecords = async () => {
-    const res = await fetch("http://localhost:5000/api/records", {
+    const res = await fetch("http://finance-backend-quav.onrender.com/api/records", {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -80,7 +80,7 @@ function App() {
 
   // ✅ ADD RECORD
   const handleAddRecord = async () => {
-    await fetch("http://localhost:5000/api/records", {
+    await fetch("http://finance-backend-quav.onrender.com/api/records", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -104,7 +104,7 @@ function App() {
 
   // ✅ DELETE RECORD
   const handleDelete = async (id) => {
-    await fetch(`http://localhost:5000/api/records/${id}`, {
+    await fetch(`http://finance-backend-quav.onrender.com/api/records/${id}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -117,7 +117,7 @@ function App() {
 
   // ✅ UPDATE RECORD
   const handleUpdate = async () => {
-    await fetch(`http://localhost:5000/api/records/${editId}`, {
+    await fetch(`http://finance-backend-quav.onrender.com/api/records/${editId}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
