@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Bar } from "react-chartjs-2";
 
 import {
@@ -58,42 +58,39 @@ function App() {
   };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => {
-  const loadData = async () => {
-    if (token) {
-      await fetchDashboard();
-      await fetchRecords();
-    }
-  };
 
-  loadData();
+const fetchDashboard = useCallback(async () => {
+  const res = await fetch(
+    "https://finance-backend-quav.onrender.com/api/dashboard/summary",
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  const data = await res.json();
+  setDashboard(data);
 }, [token]);
 
-  const fetchDashboard = async () => {
-    const res = await fetch(
-      "https://finance-backend-quav.onrender.com/api/dashboard/summary",
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    const data = await res.json();
-    setDashboard(data);
-  };
+ const fetchRecords = useCallback(async () => {
+  const res = await fetch(
+    "https://finance-backend-quav.onrender.com/api/records",
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  const data = await res.json();
+  setRecords(data);
+}, [token]);
 
-  const fetchRecords = async () => {
-    const res = await fetch(
-      "https://finance-backend-quav.onrender.com/api/records",
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    const data = await res.json();
-    setRecords(data);
-  };
+useEffect(() => {
+  if (token) {
+    fetchDashboard();
+    fetchRecords();
+  }
+}, [token, fetchDashboard, fetchRecords]);
 
   // ✅ ADD RECORD
   const handleAddRecord = async () => {
