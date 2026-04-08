@@ -59,11 +59,15 @@ function App() {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
+  const loadData = async () => {
     if (token) {
-      fetchDashboard();
-      fetchRecords();
+      await fetchDashboard();
+      await fetchRecords();
     }
-  }, [token]);
+  };
+
+  loadData();
+}, [token]);
 
   const fetchDashboard = async () => {
     const res = await fetch(
